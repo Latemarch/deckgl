@@ -6,6 +6,7 @@ export default function page() {
   const geoJson = getMap("sidoKorea.json");
   const path = getPath("road.json");
   const data = Object.values(mapInfo).map((v: any) => v.center);
+  //https://raw.githubusercontent.com/visgl/deck.gl-data/master/examples/highway/roads.json
 
   return (
     <div className="w-full h-full flex ">
