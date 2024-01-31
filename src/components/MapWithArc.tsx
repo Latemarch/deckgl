@@ -11,9 +11,9 @@ import { getMapProperties } from "@/service/server/getFile";
 const INITIAL_VIEW_STATE = {
   longitude: 126.9918,
   latitude: 37.552,
-  zoom: 7,
-  pitch: 0,
-  bearing: 0,
+  zoom: 6,
+  pitch: 10,
+  bearing: 10,
 };
 const mapBoxKey = process.env.NEXT_PUBLIC_MAPBOX_APIKEY;
 
@@ -26,8 +26,7 @@ const mapBoxKey = process.env.NEXT_PUBLIC_MAPBOX_APIKEY;
 // ];
 
 // DeckGL react component
-export default function MapWithArc({ data, geoJson }: any) {
-  console.log(geoJson.features[0]);
+export default function MapWithArc({ data, geoJson, path }: any) {
   const base = data[0];
   const geoJsonLayer = new GeoJsonLayer({
     id: "geojson-layer",
@@ -40,7 +39,7 @@ export default function MapWithArc({ data, geoJson }: any) {
     lineWidthScale: 20,
     lineWidthMinPixels: 2,
     getFillColor: [100, 160, 180, 200],
-    getLineColor: [255, 140, 0],
+    getLineColor: [255, 255, 255],
     getPointRadius: 100,
     getLineWidth: 1,
     getElevation: 30,
@@ -61,15 +60,24 @@ export default function MapWithArc({ data, geoJson }: any) {
     getFillColor: (d) => [255, 140, 0],
     getLineColor: (d) => [0, 0, 0],
   });
+  const colorRange: any = [
+    [1, 152, 189],
+    [73, 227, 206],
+    [216, 254, 181],
+    [254, 237, 177],
+    [254, 173, 84],
+    [209, 55, 78],
+  ];
   const hexagonLayer = new HexagonLayer({
     id: "hexagon-layer",
+    colorRange,
     data,
     pickable: true,
     extruded: true,
     radius: 1000,
     elevationScale: 100,
     getPosition: (d) => d,
-    getElevationWeight: (d, i) => i.index,
+    getElevationWeight: (d, i) => i.index * i.index,
   });
   const arcLayer = new ArcLayer({
     id: "arc-layer",
@@ -86,8 +94,8 @@ export default function MapWithArc({ data, geoJson }: any) {
   const layers = [
     new LineLayer({ id: "line-layer", data }),
     geoJsonLayer,
-    arcLayer,
-    hexagonLayer,
+    // arcLayer,
+    // hexagonLayer,
     // scatterLayer,
   ];
   return (
