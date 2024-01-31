@@ -1,6 +1,6 @@
 "use client";
 import React from "react";
-import { LineLayer } from "@deck.gl/layers/typed";
+import { LineLayer, ArcLayer } from "@deck.gl/layers/typed";
 import DeckGL from "@deck.gl/react/typed";
 import { GeoJsonLayer } from "@deck.gl/layers/typed";
 import { Map } from "react-map-gl";
@@ -9,7 +9,7 @@ import { Map } from "react-map-gl";
 const INITIAL_VIEW_STATE = {
   longitude: 126.9918,
   latitude: 37.552,
-  zoom: 10,
+  zoom: 7,
   pitch: 0,
   bearing: 0,
 };
@@ -25,8 +25,17 @@ const data = [
 
 // DeckGL react component
 export default function MapWithArc() {
-  const layers = [new LineLayer({ id: "line-layer", data })];
-
+  const arcLayer = new ArcLayer({
+    id: "arc-layer",
+    data,
+    getSourcePosition: (d) => d.sourcePosition,
+    getTargetPosition: (d) => d.targetPosition,
+    getSourceColor: [0, 128, 255], // 예시 색상: 파란색
+    getTargetColor: [255, 0, 128], // 예시 색상: 분홍색
+    getWidth: 5, // 선의 굵기
+    // 추가적인 설정 (예: 높이, 곡률 등)은 여기에 추가할 수 있습니다.
+  });
+  const layers = [new LineLayer({ id: "line-layer", data }), arcLayer];
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
