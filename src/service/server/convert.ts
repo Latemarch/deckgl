@@ -1,11 +1,23 @@
 export function convertToGeoJSON(data: any) {
   // 노선별로 데이터 그룹화
   const groupedByRoute = data.reduce((acc: any, item: any) => {
+    // const route = item["노선번호"];
+    // if (!acc[route]) {
+    //   acc[route] = [];
+    // }
+    // acc[route].push([item["Y좌표값"], item["X좌표값"]]);
+    // return acc;
     const route = item["노선번호"];
-    if (!acc[route]) {
-      acc[route] = [];
+    const latitude = item["Y좌표값"]; // 위도 값
+
+    // 위도가 35에서 38 범위 내인지 확인
+    if (latitude >= 35 && latitude <= 38) {
+      if (!acc[route]) {
+        acc[route] = [];
+      }
+      acc[route].push([item["Y좌표값"], item["X좌표값"]]);
     }
-    acc[route].push([item["Y좌표값"], item["X좌표값"]]);
+
     return acc;
   }, {});
 
