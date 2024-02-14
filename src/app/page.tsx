@@ -1,4 +1,6 @@
+import JSDeck from "@/components/JSDeck";
 import MapWithArc from "@/components/MapWithArc";
+import VworldMap from "@/components/VworldMap";
 import { getMap, getMapProperties, getPath } from "@/service/server/getFile";
 
 export default function Home() {
@@ -12,7 +14,10 @@ export default function Home() {
 
   return (
     <div className="w-full h-full flex bg-blue-200">
-      <MapWithArc {...{ data, path, geoJson }} />
+      {/* <MapWithArc {...{ data, path, geoJson }} /> */}
+      <JSDeck {...{ data, path, geoJson }} />
+
+      {/* <VworldMap /> */}
     </div>
   );
 }

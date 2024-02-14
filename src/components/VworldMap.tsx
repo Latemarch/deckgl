@@ -1,6 +1,5 @@
 "use client";
-import Head from "next/head";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import "ol/ol.css";
 import { Map, View } from "ol";
 import { OSM } from "ol/source";
