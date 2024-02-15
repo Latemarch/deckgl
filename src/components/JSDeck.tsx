@@ -16,13 +16,13 @@ export default function JSDeck({ data, geoJson, path }: any) {
   // console.log(data);
   useEffect(() => {
     // Initialize mapbox-gl map
-    // const map = new mapboxgl.Map({
-    //   container: "map", // container id
-    //   style: "mapbox://styles/mapbox/dark-v11", // map style URL
-    //   accessToken: process.env.NEXT_PUBLIC_MAPBOX_APIKEY,
-    //   center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude], // starting position
-    //   zoom: INITIAL_VIEW_STATE.zoom, // starting zoom
-    // });
+    const map = new mapboxgl.Map({
+      container: "map", // container id
+      style: "mapbox://styles/mapbox/dark-v11", // map style URL
+      accessToken: process.env.NEXT_PUBLIC_MAPBOX_APIKEY,
+      center: [INITIAL_VIEW_STATE.longitude, INITIAL_VIEW_STATE.latitude], // starting position
+      zoom: INITIAL_VIEW_STATE.zoom, // starting zoom
+    });
 
     // Initialize DeckGL
     const base = data[0];
@@ -33,18 +33,11 @@ export default function JSDeck({ data, geoJson, path }: any) {
       pickable: true,
       stroked: true,
       filled: true,
-      // extruded: true,
-      // pointType: "circle",
       lineWidthScale: 10,
       lineWidthMinPixels: 2,
       getFillColor: [100, 160, 180, 200],
       opacity: 0.1,
-      // getFillColor: (d: any) =>
-      //   code === d.properties.sido ? [100, 160, 180, 200] : [255, 255, 255, 0],
-      // getLineColor: [255, 255, 255],
-      // getPointRadius: 100,
       getLineWidth: 1,
-      // getElevation: 30,
       onClick: ({ object }) => {
         console.log(object.properties.sido);
       },
@@ -66,14 +59,14 @@ export default function JSDeck({ data, geoJson, path }: any) {
       controller: true,
       layers: [geoJsonLayer, arcLayer],
       // This is where you can add mapbox-gl map to sync with DeckGL
-      // onViewStateChange: ({ viewState }) => {
-      //   map.jumpTo({
-      //     center: [viewState.longitude, viewState.latitude],
-      //     zoom: viewState.zoom,
-      //     bearing: viewState.bearing,
-      //     pitch: viewState.pitch,
-      //   });
-      // },
+      onViewStateChange: ({ viewState }) => {
+        map.jumpTo({
+          center: [viewState.longitude, viewState.latitude],
+          zoom: viewState.zoom,
+          bearing: viewState.bearing,
+          pitch: viewState.pitch,
+        });
+      },
     });
     // deckgl.setProps({ layers: [arcLayer] });
 
@@ -84,5 +77,5 @@ export default function JSDeck({ data, geoJson, path }: any) {
     };
   }, []); // Add dependencies here if necessary
 
-  return <div id="map" className="fixed w-full h-full bg-red-200" />;
+  return <div id="map" className="fixed w-full h-full" />;
 }

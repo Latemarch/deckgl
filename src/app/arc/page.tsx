@@ -20,7 +20,7 @@ export default function page() {
   return (
     <div className="w-full h-full flex ">
       {/* <MapWithArc {...{ data, path, geoJson }} /> */}
-      <VworldMap />
+      {/* <VworldMap /> */}
     </div>
   );
 }
