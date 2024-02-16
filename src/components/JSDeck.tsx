@@ -36,7 +36,7 @@ export default function JSDeck({ data, geoJson, path }: any) {
       lineWidthScale: 10,
       lineWidthMinPixels: 2,
       getFillColor: [100, 160, 180, 200],
-      opacity: 0.1,
+      opacity: 0,
       getLineWidth: 1,
       onClick: ({ object }) => {
         console.log(object.properties.sido);
@@ -73,7 +73,7 @@ export default function JSDeck({ data, geoJson, path }: any) {
     // Clean up
     return () => {
       deckgl.finalize();
-      // map.remove();
+      map.remove();
     };
   }, []); // Add dependencies here if necessary
 
