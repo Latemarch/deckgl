@@ -55,24 +55,30 @@ export default function DashboardMap({ topoJson, districtInfo }: any) {
       getTargetColor: [0, 128, 255], // 예시 색상: 파란색
       getWidth: 3,
     });
+    const flight = centers.map((center, index) => {
+      const obj: any = { id: index, base, center, alt: 0 };
+      const baseTime = 1600000000000; // 기준 시간 (예: 2020-09-13T12:26:40.000Z의 타임스탬프)
+      const departureInterval = 60000; // 1분 간격
+      obj.time1 = baseTime + index * departureInterval;
+      obj.time2 = obj.time1 + departureInterval; // 각 항공편의 비행 시간을 1분으로 가정
+      return obj;
+    });
 
     const textLayer = new TextLayer({
       id: "text-layer",
       data: Object.values(districtInfo).filter(
         (el: any) => el.sido === "41" && !el.adm_nm
       ),
-      fontFamily: "Malgun Gothic",
+      // fontFamily: "Nanum Gothic",
       pickable: true,
       getPosition: (d) => d.center,
-      getText: (d) => {
-        console.log(d.center, d.sggnm);
-        return d.sggnm;
-      },
+      getText: (d) => d.sggnm,
       getSize: 20,
       getAngle: 0,
       getTextAnchor: "middle",
       getAlignmentBaseline: "center",
-      characterSet: createCharacterSet(),
+      // characterSet: "auto",
+      // characterSet: createCharacterSet(),
     });
     const deckgl = new Deck({
       initialViewState: INITIAL_VIEW_STATE,
@@ -89,17 +95,4 @@ export default function DashboardMap({ topoJson, districtInfo }: any) {
 
   // return <div id="map" className="fixed w-full h-full" />;
   return <div className="w-20 h-10 bg-gray-300 text-red-800">tooltip</div>;
-}
-
-function createCharacterSet() {
-  const charSet = [];
-  // ASCII 문자 추가 (공백 문자부터 '~'까지)
-  for (let i = 32; i <= 127; i++) {
-    charSet.push(String.fromCharCode(i));
-  }
-  // 한글 전체 범위 추가
-  for (let i = 0xac00; i <= 0xd7a3; i++) {
-    charSet.push(String.fromCharCode(i));
-  }
-  return charSet;
 }
