@@ -94,5 +94,5 @@ export default function DashboardMap({ topoJson, districtInfo }: any) {
   }, []);
 
   // return <div id="map" className="fixed w-full h-full" />;
-  return <div className="w-20 h-10 bg-gray-300 text-red-800">tooltip</div>;
+  return <></>;
 }

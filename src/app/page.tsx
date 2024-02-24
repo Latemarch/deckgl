@@ -1,3 +1,5 @@
+import ArcExample from "@/components/ArcExample";
+import ArcExampleWithHtml from "@/components/ArcExampleWithHtml";
 import DashboardMap from "@/components/DashboardMap";
 import { getMap, getMapProperties } from "@/service/server/getFile";
 
@@ -8,6 +10,8 @@ export default function Home() {
   return (
     <div className="w-full h-full flex bg-blue-200">
       <DashboardMap {...{ topoJson, districtInfo }} />
+      {/* <ArcExample /> */}
+      {/* <ArcExampleWithHtml /> */}
     </div>
   );
 }
