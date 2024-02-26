@@ -8,9 +8,9 @@ import { getSggScaleSidoGeoJson } from "@/service/client/manipulateMap";
 const INITIAL_VIEW_STATE = {
   longitude: 126.9918,
   latitude: 37.552,
-  zoom: 8,
-  pitch: 0,
-  bearing: 0,
+  zoom: 8.5,
+  pitch: 45,
+  bearing: -10,
 };
 
 export default function DashboardMap({ topoJson, districtInfo }: any) {
