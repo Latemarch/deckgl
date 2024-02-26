@@ -1,9 +1,9 @@
-import Image from "next/image";
+import Nav from "@/components/Nav";
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      main
-    </main>
+    <div className="w-full h-full grid grid-cols-3 justify-center max-w-5xl gap-10 p-10">
+      <Nav />
+    </div>
   );
 }
