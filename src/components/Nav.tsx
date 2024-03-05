@@ -8,14 +8,16 @@ export default function Nav() {
         <Link
           key={link.alt}
           href={`/${link.alt}`}
-          className="w-full border-2 overflow-hidden  flex flex-col gap-4 rounded-xl"
+          className="w-full border-2 overflow-hidden  flex flex-col rounded-xl"
         >
-          <Image
-            src={link.src}
-            alt={link.alt}
-            width={link.width}
-            height={link.height}
-          />
+          <div className="w-full h-52 relative">
+            <Image
+              src={link.src}
+              alt={link.alt}
+              layout="fill"
+              objectFit="cover"
+            />
+          </div>
           <div className="border-t-2 text-center p-2">{link.title}</div>
         </Link>
       ))}
@@ -29,5 +31,12 @@ const links = [
     width: 400,
     height: 400,
     title: "경기도 ARC",
+  },
+  {
+    src: "/images/staticmap.png",
+    alt: "staticmap",
+    width: 400,
+    height: 400,
+    title: "정적 폴리곤",
   },
 ];

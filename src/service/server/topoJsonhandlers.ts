@@ -1,34 +1,21 @@
 import * as d3 from "d3";
 import * as topojson from "topojson-client";
-import { Feature, MultiLineString, MultiPolygon } from "geojson";
+import {
+  Feature,
+  FeatureCollection,
+  MultiLineString,
+  MultiPolygon,
+} from "geojson";
 import { Topology, GeometryObject } from "topojson-specification";
 import { getMap } from "./getFile";
-
-const topoJson = getMap("koreaTopo.json");
-
-// export function extractTopoLocation(regionCode: string) {
-//   const geometries = topoJson.objects["jjh"].geometries;
-//   console.log(geometries[0]);
-
-//   const filteredGeometries = geometries.filter(
-//     (geometry: any) =>
-//       // geometry.properties[regionCode.length > 2 ? "sgg" : "sido"] === regionCode
-//       geometry.properties["sido"] === regionCode
-//   );
-
-//   const filteredGeometryCollection: GeometryObject = {
-//     type: "GeometryCollection",
-//     geometries: filteredGeometries,
-//   };
-
-//   // 새로운 GeometryCollection 객체를 GeoJSON으로 변환
-//   const geojson = topojson.feature(topoJson, filteredGeometryCollection);
-
-//   return geojson;
-// }
 import { feature, merge } from "topojson-client";
 
-export function extractTopoLocation(regionCode: string) {
+// const topoJson = getMap("koreaTopo.json");
+
+export function extractTopoLocation(
+  regionCode: string,
+  topoJson: any
+): FeatureCollection {
   const geometries = topoJson.objects["jjh"].geometries;
 
   // 'sido' 기준으로 필터링
@@ -69,7 +56,7 @@ export function extractTopoLocation(regionCode: string) {
   const geojson = {
     type: "FeatureCollection",
     features: mergedGeometries,
-  };
+  } as FeatureCollection;
 
   return geojson;
 }

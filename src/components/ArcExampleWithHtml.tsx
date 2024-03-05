@@ -3,7 +3,6 @@
 import React, { useEffect } from "react";
 import { Deck } from "@deck.gl/core/typed";
 import { ArcLayer, GeoJsonLayer } from "@deck.gl/layers/typed";
-import mapboxgl from "mapbox-gl";
 import { getSggScaleSidoGeoJson } from "@/service/client/manipulateMap";
 
 const INITIAL_VIEW_STATE = {
