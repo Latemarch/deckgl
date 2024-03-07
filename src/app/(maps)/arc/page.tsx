@@ -1,3 +1,4 @@
+import ArcWithBase from "@/components/ArcWithBase";
 import DashboardMap from "@/components/DashboardMap";
 import MapWithArc from "@/components/MapWithArc";
 import VworldMap from "@/components/VworldMap";
@@ -18,10 +19,8 @@ export default function page() {
   const topoJson = getMap("koreaTopo.json");
 
   return (
-    <div className="w-full h-full flex ">
-      <DashboardMap {...{ topoJson, districtInfo }} />
-      {/* <MapWithArc {...{ data, path, geoJson }} /> */}
-      {/* <VworldMap /> */}
+    <div className="fixed inset-0 overflow-hidden">
+      <ArcWithBase {...{ topoJson, districtInfo }} />
     </div>
   );
 }
