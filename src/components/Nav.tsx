@@ -10,12 +10,13 @@ export default function Nav() {
           href={`/${link.alt}`}
           className="w-full border-2 overflow-hidden  flex flex-col rounded-xl"
         >
-          <div className="w-full h-52 relative">
+          <div className="w-full h-52 relative overflow-hidden">
             <Image
               src={link.src}
               alt={link.alt}
-              layout="fill"
-              objectFit="cover"
+              width={300}
+              height={200}
+              objectFit="fill"
             />
           </div>
           <div className="border-t-2 text-center p-2">{link.title}</div>

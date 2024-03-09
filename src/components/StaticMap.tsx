@@ -1,18 +1,16 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 "use client";
 import React from "react";
 import DeckGL from "@deck.gl/react/typed";
-import { Map } from "react-map-gl";
-import { ArcLayer } from "@deck.gl/layers/typed";
-import { GeoJsonLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, TextLayer } from "@deck.gl/layers/typed";
 import { Topology } from "topojson-specification";
-import {
-  Feature,
-  FeatureCollection,
-  GeoJsonProperties,
-  Geometry,
-} from "geojson";
-import { extractTopoLocation } from "@/service/server/topoJsonhandlers";
+import { Feature, FeatureCollection } from "geojson";
 import hexToRgb from "@/service/client/hexToRgb";
+import { extractTopoLocation } from "@/service/server/topoJsonhandlers";
+import {
+  animateFeatureNorth,
+  animateTextNorth,
+} from "@/service/client/dashboardanimator";
 
 // Viewport settings
 const INITIAL_VIEW_STATE = {
@@ -25,17 +23,22 @@ const INITIAL_VIEW_STATE = {
 
 type Props = {
   topoJson: Topology;
+  districtInfo: any;
 };
-export default function StaticMap({ topoJson }: Props) {
+export default function StaticMap({ topoJson, districtInfo }: Props) {
   const [hoveredCity, setHoveredCity] = React.useState(null);
+  const [textInfo, setTextInfo] = React.useState(districtInfo);
   const [feature, setFeature] = React.useState(null);
-  const geoJson = extractTopoLocation("41", topoJson);
+  const geoJson = React.useMemo(
+    () => extractTopoLocation("41", topoJson),
+    [hoveredCity]
+  );
+
   React.useMemo(() => {
+    if (!hoveredCity) return;
     const f = getGeoJsonFeature(hoveredCity, geoJson);
-    if (!f) return;
-    console.log("useMemo");
-    animateFeatureNorth(f, setFeature);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (f) animateFeatureNorth(f, setFeature);
+    animateTextNorth(districtInfo, hoveredCity, setTextInfo);
   }, [hoveredCity]);
 
   const geoJsonLayer = new GeoJsonLayer({
@@ -75,7 +78,21 @@ export default function StaticMap({ topoJson }: Props) {
       },
     });
 
-  const layers = [geoJsonLayer, floatedGeoJsonLayer].filter(Boolean);
+  const textLayer = new TextLayer({
+    id: "text-layer",
+    data: textInfo,
+    pickable: false,
+    getColor: [255, 255, 255],
+    getPosition: (d) => d.center,
+    getText: (d) => d.sggnm,
+    getSize: 14,
+    getAngle: 0,
+    getTextAnchor: "middle",
+    getAlignmentBaseline: "center",
+    characterSet: "auto",
+  });
+
+  const layers = [geoJsonLayer, floatedGeoJsonLayer, textLayer].filter(Boolean);
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
@@ -93,51 +110,5 @@ function getGeoJsonFeature(
   const selectedFeature: Feature[] = geoJson.features.filter(
     (f: Feature) => f.properties?.sgg === hoveredCity
   );
-
-  return moveFeatureNorth(selectedFeature[0], 0.01, 0.01);
-}
-
-function moveFeatureNorth(
-  feature: Feature,
-  deltaLatitude: number,
-  deltalongitude: number
-): Feature {
-  // const deltaLatitude = 0.01; // 위도를 얼마나 올릴지 결정하는 값
-  // const deltalongitude = -0.01;
-  if (
-    feature.geometry.type === "Polygon" ||
-    feature.geometry.type === "MultiPolygon"
-  ) {
-    const newGeometry = feature.geometry.coordinates.map((polygon) =>
-      polygon.map((ring: any) =>
-        ring.map(([longitude, latitude]: any) => [
-          longitude, // + deltalongitude,
-          latitude + deltaLatitude,
-        ])
-      )
-    );
-    return {
-      ...feature,
-      geometry: {
-        ...feature.geometry,
-        coordinates: newGeometry,
-      },
-    };
-  }
-  return feature; // Polygon이나 MultiPolygon이 아닌 경우 변화 없이 반환
-}
-
-function animateFeatureNorth(feature: Feature, setter: any) {
-  let rafId;
-  let step = 1;
-  const animate = (timestamp: number) => {
-    step += 1;
-    const movedFeature = moveFeatureNorth(feature, 0.001 * step, -0.001 * step);
-    setter(movedFeature);
-    rafId = requestAnimationFrame(animate);
-    if (step > 10) {
-      cancelAnimationFrame(rafId);
-    }
-  };
-  requestAnimationFrame(animate);
+  return selectedFeature[0];
 }
