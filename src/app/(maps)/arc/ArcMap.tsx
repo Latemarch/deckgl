@@ -1,12 +1,11 @@
 "use client";
 import * as React from "react";
 import DeckGL from "@deck.gl/react/typed";
-import { GeoJsonLayer, ArcLayer } from "@deck.gl/layers/typed";
+import { GeoJsonLayer, ArcLayer, TextLayer } from "@deck.gl/layers/typed";
 import { Topology } from "topojson-specification";
-import { Map } from "react-map-gl";
-import { extractTopoLocation } from "@/service/server/topoJsonhandlers";
+import { StaticMap } from "react-map-gl";
+import { extractTopoLocation } from "@/service/client/topoJsonHandler";
 
-const mapBoxKey = process.env.NEXT_PUBLIC_MAPBOX_APIKEY;
 const MAP_STYLE =
   "https://basemaps.cartocdn.com/gl/dark-matter-nolabels-gl-style/style.json";
 const INITIAL_VIEW_STATE = {
@@ -22,9 +21,9 @@ const INITIAL_VIEW_STATE = {
 type Props = {
   topoJson: Topology;
   districtInfo: any;
+  textInfo: any;
 };
-export default function ArcWithBase({ topoJson, districtInfo }: Props) {
-  const [viewState, setViewState] = React.useState<any>(INITIAL_VIEW_STATE);
+export default function ArcMap({ topoJson, districtInfo, textInfo }: Props) {
   const geoJson = extractTopoLocation("41", topoJson);
   const centers = Object.values(districtInfo)
     .filter((el: any) => el.sido === "41" && !el.adm_cd2)
@@ -54,18 +53,28 @@ export default function ArcWithBase({ topoJson, districtInfo }: Props) {
     getTargetColor: [62, 168, 174], // 예시 색상: 파란색
     getWidth: 3,
   });
-  const layers = [geoJsonLayer, arcLayer].filter(Boolean);
+  const textLayer = new TextLayer({
+    id: "text-layer",
+    data: textInfo,
+    pickable: false,
+    getColor: [255, 255, 255],
+    billboard: false,
+    getPosition: (d) => [d.center[0], d.center[1] - 0.01],
+    getText: (d) => d.sggnm,
+    getSize: 24,
+    getAngle: 0,
+    getTextAnchor: "middle",
+    getAlignmentBaseline: "center",
+    characterSet: "auto",
+  });
+  const layers = [geoJsonLayer, arcLayer, textLayer].filter(Boolean);
   return (
     <DeckGL
       initialViewState={INITIAL_VIEW_STATE}
       controller={true}
       layers={layers}
     >
-      <Map
-        attributionControl={false}
-        mapStyle={MAP_STYLE}
-        mapboxAccessToken={mapBoxKey}
-      />
+      <StaticMap mapStyle={MAP_STYLE} />
     </DeckGL>
   );
 }

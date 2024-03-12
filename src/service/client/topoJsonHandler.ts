@@ -1,16 +1,5 @@
-import * as d3 from "d3";
-import * as topojson from "topojson-client";
-import {
-  Feature,
-  FeatureCollection,
-  MultiLineString,
-  MultiPolygon,
-} from "geojson";
-import { Topology, GeometryObject } from "topojson-specification";
-import { getMap } from "./getFile";
-import { feature, merge } from "topojson-client";
-
-// const topoJson = getMap("koreaTopo.json");
+import { FeatureCollection } from "geojson";
+import { merge } from "topojson-client";
 
 export function extractTopoLocation(
   regionCode: string,

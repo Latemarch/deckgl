@@ -13,6 +13,18 @@ export function getMapProperties(name: string) {
   return JSON.parse(file);
 }
 
+export function getData(dir: string, name: string): JSON {
+  const filePath = path.join(
+    process.cwd(),
+    "public",
+    "data",
+    dir,
+    name + ".json"
+  );
+  const file = fs.readFileSync(filePath, "utf8");
+  return JSON.parse(file);
+}
+
 export function getMap(name: string) {
   const filePath = path.join(process.cwd(), "public", "maps", name);
   const file = fs.readFileSync(filePath, "utf8");

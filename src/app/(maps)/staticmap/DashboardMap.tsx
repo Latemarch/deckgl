@@ -2,11 +2,11 @@
 "use client";
 import React from "react";
 import DeckGL from "@deck.gl/react/typed";
+import { Feature, FeatureCollection } from "geojson";
 import { GeoJsonLayer, TextLayer } from "@deck.gl/layers/typed";
 import { Topology } from "topojson-specification";
-import { Feature, FeatureCollection } from "geojson";
 import hexToRgb from "@/service/client/hexToRgb";
-import { extractTopoLocation } from "@/service/server/topoJsonhandlers";
+import { extractTopoLocation } from "@/service/client/topoJsonHandler";
 import {
   animateFeatureNorth,
   animateTextNorth,
@@ -25,21 +25,21 @@ type Props = {
   topoJson: Topology;
   districtInfo: any;
 };
-export default function StaticMap({ topoJson, districtInfo }: Props) {
-  const [hoveredCity, setHoveredCity] = React.useState(null);
+export default function DashboardMap({ topoJson, districtInfo }: Props) {
+  const [selectedCity, setSelectedCity] = React.useState(null);
   const [textInfo, setTextInfo] = React.useState(districtInfo);
   const [feature, setFeature] = React.useState(null);
   const geoJson = React.useMemo(
     () => extractTopoLocation("41", topoJson),
-    [hoveredCity]
+    [selectedCity]
   );
 
   React.useMemo(() => {
-    if (!hoveredCity) return;
-    const f = getGeoJsonFeature(hoveredCity, geoJson);
+    if (!selectedCity) return;
+    const f = getGeoJsonFeature(selectedCity, geoJson);
     if (f) animateFeatureNorth(f, setFeature);
-    animateTextNorth(districtInfo, hoveredCity, setTextInfo);
-  }, [hoveredCity]);
+    animateTextNorth(districtInfo, selectedCity, setTextInfo);
+  }, [selectedCity]);
 
   const geoJsonLayer = new GeoJsonLayer({
     id: "geojson-layer",
@@ -49,24 +49,21 @@ export default function StaticMap({ topoJson, districtInfo }: Props) {
     filled: true,
     lineWidthScale: 100,
     getFillColor: (d: Feature) => {
-      if (d.properties?.sgg === hoveredCity) return hexToRgb("#1B2130", 1);
-      // return hexToRgbWithOpacity("#A0E2FF", 0.4);
+      if (d.properties?.sgg === selectedCity) return hexToRgb("#1B2130", 1);
       return [81, 110, 131];
     },
     getLineColor: hexToRgb("#1B2130", 1),
     getLineWidth: 5,
     onClick: ({ object }) => {
       if (!object) return;
-      setHoveredCity(object.properties.sgg);
+      setSelectedCity(object.properties.sgg);
     },
-    // transitions: {
-    // getFillColor: 500, // 색상 변화에 대한 애니메이션 지속 시간을 밀리초 단위로 설정
-    // },
   });
+
   const floatedGeoJsonLayer =
     feature &&
     new GeoJsonLayer({
-      id: "hovered-city",
+      id: "selected-city",
       data: [feature],
       pickable: true,
       stroked: true,
@@ -103,12 +100,12 @@ export default function StaticMap({ topoJson, districtInfo }: Props) {
 }
 
 function getGeoJsonFeature(
-  hoveredCity: string | null,
+  selectedCity: string | null,
   geoJson: FeatureCollection
 ): Feature | null {
-  if (!hoveredCity) return null;
+  if (!selectedCity) return null;
   const selectedFeature: Feature[] = geoJson.features.filter(
-    (f: Feature) => f.properties?.sgg === hoveredCity
+    (f: Feature) => f.properties?.sgg === selectedCity
   );
   return selectedFeature[0];
 }
