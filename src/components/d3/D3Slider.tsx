@@ -18,6 +18,11 @@ export default function D3Slider({
   setSliderPoint,
 }: Props) {
   const ref = React.useRef<HTMLDivElement | null>(null);
+  const quantizeScale = d3
+    .scaleQuantize()
+    .domain([0, width])
+    .range(d3.range(0, range + 0.1, 1));
+
   React.useEffect(() => {
     const svg = d3
       .select(ref.current)
@@ -79,12 +84,12 @@ export default function D3Slider({
             currentSliderPoint !== 0
           ) {
             const leftTick = currentSliderPoint - tickInterval;
-            circlePoint.attr("cx", xScale(leftTick));
+            dragElements(leftTick);
             return leftTick;
           } else {
             const leftTick =
               Math.floor(currentSliderPoint / tickInterval) * tickInterval;
-            circlePoint.attr("cx", xScale(leftTick));
+            dragElements(leftTick);
             return leftTick;
           }
         });
@@ -104,59 +109,61 @@ export default function D3Slider({
             currentSliderPoint % tickInterval === 0 &&
             currentSliderPoint !== range - (range % 5)
           ) {
-            const leftTick = currentSliderPoint + tickInterval;
-            circlePoint.attr("cx", xScale(leftTick));
-            return leftTick;
+            const rightTick = currentSliderPoint + tickInterval;
+            dragElements(rightTick);
+            return rightTick;
           } else {
-            const leftTick =
+            const rightTick =
               Math.ceil(currentSliderPoint / tickInterval) * tickInterval;
-            circlePoint.attr("cx", xScale(leftTick));
-            return leftTick;
+            dragElements(rightTick);
+            return rightTick;
           }
         });
       });
 
-    const circleGroup = barGroup
-      .append("g")
-      .selectAll(".dataCircle")
-      .data([sliderPoint]);
-
-    const circlePoint = circleGroup
-      .enter()
+    const circlePoint = barGroup
       .append("circle")
-      .attr("cx", (d) => xScale(d))
+      .attr("cx", xScale(sliderPoint))
       .attr("cy", 4)
       .attr("r", 6)
       .attr("stroke", "white")
       .attr("stroke-width", "1")
       .attr("fill", customColors.success);
 
-    circleGroup
-      .enter()
+    const tooltipGroup = barGroup
+      .append("g")
+      .attr("transform", `translate(${xScale(sliderPoint) - 22},-28)`);
+    tooltipGroup
       .append("image")
-      .attr("x", (d) => xScale(d))
-      .attr("y", 20)
       .attr("href", "images/tooltipBubble.svg")
-      .attr("width", 30)
+      .attr("width", 44)
       .attr("height", 30);
-    // .attr("x", ));
-    const drag = d3
-      .drag<SVGCircleElement, number, number>()
-      .on("drag", dragging);
+    const tooltipText = tooltipGroup
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr("fill", "white")
+      .attr("font-size", "12")
+      .attr("x", 22)
+      .attr("y", 16)
+      .attr("style", "user-select: none;")
+      .text(sliderPoint);
 
+    const drag = d3.drag<SVGCircleElement, unknown>().on("drag", dragging);
     circlePoint.call(drag);
 
     function dragging(
       this: SVGGElement,
       e: d3.D3DragEvent<SVGGElement, number, number>
     ) {
-      const quantizeScale = d3
-        .scaleQuantize()
-        .domain([0, width])
-        .range(d3.range(0, range + 0.1, 1));
       const quantizedVale = quantizeScale(e.x);
-      circlePoint.attr("cx", xScale(quantizedVale));
+      dragElements(quantizedVale);
       setSliderPoint(quantizedVale);
+    }
+
+    function dragElements(newX: number) {
+      circlePoint.attr("cx", xScale(newX));
+      tooltipGroup.attr("transform", `translate(${xScale(newX) - 22},-28)`);
+      tooltipText.text(newX);
     }
 
     return function cleanup() {

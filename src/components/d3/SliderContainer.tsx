@@ -4,7 +4,6 @@ import D3Slider from "./D3Slider";
 
 export default function SliderContainer() {
   const [sliderPoint, setSliderPoint] = React.useState(0);
-  console.log("container", sliderPoint);
   return (
     <div className="w-full h-20">
       <D3Slider
