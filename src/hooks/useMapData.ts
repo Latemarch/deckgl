@@ -19,5 +19,11 @@ export default function useMapData() {
         fetch(`/api/data?dir=${dir}&name=${name}`).then((res) => res.json()),
     });
 
-  return { useMapQuery, usePropertyQuery, useMapDataQuery };
+  const useGzQuery = (name: string) =>
+    useQuery({
+      queryKey: ["data", name],
+      queryFn: () => fetch(`/api/gz?&name=${name}`).then((res) => res.json()),
+    });
+
+  return { useMapQuery, usePropertyQuery, useMapDataQuery, useGzQuery };
 }

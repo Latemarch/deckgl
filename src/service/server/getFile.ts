@@ -24,6 +24,12 @@ export function getData(dir: string, name: string): JSON {
   const file = fs.readFileSync(filePath, "utf8");
   return JSON.parse(file);
 }
+export function getGz(name: string): any {
+  const filePath = path.join(process.cwd(), "public", "data", name + ".gz");
+  const fileContent = fs.readFileSync(filePath);
+  // 파일의 내용을 Buffer 객체로 반환합니다.
+  return fileContent;
+}
 
 export function getMap(name: string) {
   const filePath = path.join(process.cwd(), "public", "maps", name);
